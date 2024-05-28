@@ -391,29 +391,14 @@
 #pragma  --------------------------------------------- Private ----------------------------------------------------
 
 
- 
-
-
-// - (void) startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
-//     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-//     [self _startContinuousEventWithMessageIDs:ids uName:uName queue:queue];
-// }
-
-// - (void) _startContinuousEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName queue:(dispatch_queue_t)queue {
-//     dispatch_async(queue, ^{
-//         [self _startEventWithMessageIDs:ids uName:uName];
-//         [self _startContinuousEventWithMessageIDs:ids uName:uName queue:queue];
-//     });
-// }
-
-
+   
 - (void) startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
 
  #pragma mark - A background loop to make the connection alive 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     for (;;) { 
       [self _startEventWithMessageIDs:ids uName:uName];
-      [NSThread sleepForTimeInterval:1.0];
+      [NSThread sleepForTimeInterval:0.7];
        }
     });
 }
