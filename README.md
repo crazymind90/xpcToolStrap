@@ -37,7 +37,7 @@ It functions as both a daemon and a library ..
 
 * Add `libxpcToolStrap.h` to your project .
 ```objective-c
-#import "libXPCToolStrap.h"
+#import "libxpcToolStrap.h"
 ```
 
 #### This is [Poster] ~ the process you want to send the msg from
