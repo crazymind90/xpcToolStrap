@@ -75,7 +75,7 @@
     #pragma mark - Get [XPC_SENDER] value 
                         const char *sender = xpc_dictionary_get_string(message, "XPC_SENDER");
                         if (!sender) {
-                            CLog(@"[-] This is a messed up");
+                            // CLog(@"[-] This is a messed up");
                             return;
                         }
 
@@ -199,10 +199,10 @@
     );
 
     if (!service) {
-        CLog(@"Failed to create XPC service");
+        // CLog(@"Failed to create XPC service");
         return;
     } else {
-        CLog(@"[+] Successfully created [com.cm90.xpcToolStrap] service");
+        // CLog(@"[+] Successfully created [com.cm90.xpcToolStrap] service");
     }
 
     [self _handleConnection:service withName:"com.cm90.xpcToolStrap"];
@@ -224,9 +224,10 @@ int main(int argc, char** argv, char** envp)
         [XPCToolStrapd load];
  
  #pragma mark - To prevent this daemon from restarting each 3 seconds
-        NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
-        for (;;)
-        [runLoop run];
+        // NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
+        // for (;;)
+        // [runLoop run];
+        dispatch_main();
 
 	});
 

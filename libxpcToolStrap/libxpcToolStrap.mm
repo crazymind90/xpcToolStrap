@@ -64,7 +64,7 @@
                             shared.msgIds = [NSMutableArray array];
                         }
                         @catch (NSException *exception) {
-                            CLog(@"Exception: %@", exception);
+                            // CLog(@"Exception: %@", exception);
                         }
              
                     } 
@@ -105,12 +105,12 @@
 - (void) _postToClientWithMsgID:(NSString *)msgID uName:(NSString *)uName userInfo:(NSDictionary *)dict isWithReply:(BOOL)isWithReply {
 
         if (![self isValidUname:uName]) {
-            CLog(@"uName is empty, you must use -[defineUniqueName:]");
+            // CLog(@"uName is empty, you must use -[defineUniqueName:]");
             return;
         }
 
         if (!msgID || ![msgID isKindOfClass:[NSString class]]) {
-            CLog(@"Invalid msgID");
+            // CLog(@"Invalid msgID");
             return;
         }
         
@@ -122,14 +122,14 @@
         );
 
         if (connection == NULL) {
-            CLog(@"Failed to create XPC connection");
+            // CLog(@"Failed to create XPC connection");
             return;
         }
 
     #pragma mark - Create a message
         xpc_object_t xpcMessage = xpc_dictionary_create(NULL, NULL, 0);
         if (!xpcMessage) {
-            CLog(@"Failed to create XPC message dictionary");
+            // CLog(@"Failed to create XPC message dictionary");
             xpc_release(connection);
             return;
         }
@@ -138,7 +138,7 @@
     #pragma mark - Convert to XPCDictionary
         xpc_object_t xpcDict = convertNSDictionaryToXPCDictionary(dict);
         if (!xpcDict) {
-            CLog(@"Failed to convert NSDictionary to XPC dictionary");
+            // CLog(@"Failed to convert NSDictionary to XPC dictionary");
             xpc_release(xpcMessage);
             xpc_release(connection);
             return;
@@ -178,13 +178,13 @@
     
    
     if (![self isValidUname:uName]) {
-        CLog(@"uName is empty, you must use -[defineUniqueName:]");
+        // CLog(@"uName is empty, you must use -[defineUniqueName:]");
         return;
     }
 
      
     if (!msgID || ![msgID isKindOfClass:[NSString class]]) {
-        CLog(@"Invalid msgID");
+        // CLog(@"Invalid msgID");
         return;
     }
     
@@ -197,14 +197,14 @@
         );
 
         if (connection == NULL) {
-            CLog(@"Failed to create XPC connection");
+            // CLog(@"Failed to create XPC connection");
             return;
         }
 
     #pragma mark - Create a message
         xpc_object_t xpcMessage = xpc_dictionary_create(NULL, NULL, 0);
         if (!xpcMessage) {
-            CLog(@"Failed to create XPC message dictionary");
+            // CLog(@"Failed to create XPC message dictionary");
             xpc_release(connection);
             return;
         }
@@ -213,7 +213,7 @@
     #pragma mark - Convert to XPCDictionary
         xpc_object_t xpcDict = convertNSDictionaryToXPCDictionary(dict);
         if (!xpcDict) {
-            CLog(@"Failed to convert NSDictionary to XPC dictionary");
+            // CLog(@"Failed to convert NSDictionary to XPC dictionary");
             xpc_release(xpcMessage);
             xpc_release(connection);
             return;
@@ -252,12 +252,12 @@
     @autoreleasepool {
   
         if (![self isValidUname:uName]) {
-        CLog(@"uName is empty, you must use -[defineUniqueName:]");
+        // CLog(@"uName is empty, you must use -[defineUniqueName:]");
         return;
         }
    
         if (!ids || ids.count == 0) {
-            CLog(@"[-] No message IDs provided");
+            // CLog(@"[-] No message IDs provided");
             return;
         }
 
@@ -270,14 +270,14 @@
                 XPC_CONNECTION_MACH_SERVICE_PRIVILEGED
             );
             if (connection == NULL) {
-                CLog(@"Failed to create XPC connection");
+                // CLog(@"Failed to create XPC connection");
                 return;
             }
             
     #pragma mark - Create main dictionary
             xpc_object_t xpcMessage = xpc_dictionary_create(NULL, NULL, 0);
             if (!xpcMessage) {
-                CLog(@"Failed to create XPC message dictionary");
+                // CLog(@"Failed to create XPC message dictionary");
                 xpc_release(connection);
                 return;
             }
@@ -305,7 +305,7 @@
 
 
             if (!xpc_msgIds) {
-                CLog(@"Failed to create XPC array");
+                // CLog(@"Failed to create XPC array");
                 xpc_release(xpcMessage);
                 xpc_release(connection);
                 return;
@@ -384,8 +384,7 @@
             xpc_connection_resume(connection);
             xpc_release(xpcMessage);
             xpc_release(connection);
-
-            [NSThread sleepForTimeInterval:0.7];
+ 
         }
 }
 
@@ -395,28 +394,29 @@
  
 
 
-- (void) startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    [self _startContinuousEventWithMessageIDs:ids uName:uName queue:queue];
-}
-
-- (void) _startContinuousEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName queue:(dispatch_queue_t)queue {
-    dispatch_async(queue, ^{
-        [self _startEventWithMessageIDs:ids uName:uName];
-        [self _startContinuousEventWithMessageIDs:ids uName:uName queue:queue];
-    });
-}
-
-
 // - (void) startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
+//     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+//     [self _startContinuousEventWithMessageIDs:ids uName:uName queue:queue];
+// }
 
-//  #pragma mark - A background loop to make the connection alive 
-//     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//     for (;;) { 
-//       [self _startEventWithMessageIDs:ids uName:uName];
-//        }
+// - (void) _startContinuousEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName queue:(dispatch_queue_t)queue {
+//     dispatch_async(queue, ^{
+//         [self _startEventWithMessageIDs:ids uName:uName];
+//         [self _startContinuousEventWithMessageIDs:ids uName:uName queue:queue];
 //     });
 // }
+
+
+- (void) startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
+
+ #pragma mark - A background loop to make the connection alive 
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    for (;;) { 
+      [self _startEventWithMessageIDs:ids uName:uName];
+      [NSThread sleepForTimeInterval:1.0];
+       }
+    });
+}
 
 - (void) postToClientWithMsgID:(NSString *)msgID uName:(NSString *)uName userInfo:(NSDictionary *)dict {
    [self _postToClientWithMsgID:msgID uName:uName userInfo:dict isWithReply:NO];
