@@ -227,7 +227,8 @@ int main(int argc, char** argv, char** envp)
         // NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
         // for (;;)
         // [runLoop run];
-        dispatch_main();
+        [[NSRunLoop currentRunLoop] run];
+        // dispatch_main();
 
 	});
 
