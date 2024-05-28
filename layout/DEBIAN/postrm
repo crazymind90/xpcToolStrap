@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "unloading xpcToolStrap daemon ..."
+launchctl unload /var/jb/Library/LaunchDaemons/com.cm90.xpcToolStrap.plist 2> /dev/null
+echo "Done!"
+exit 0

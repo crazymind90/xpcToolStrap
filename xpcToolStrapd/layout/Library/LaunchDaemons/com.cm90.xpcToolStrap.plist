@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.cm90.xpcToolStrap</string>
+	<key>Program</key>
+	<string>/var/jb/usr/local/libexec/xpcToolStrapd</string>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>UserName</key>
+	<string>root</string>
+	<key>ProcessType</key>
+	<string>Interactive</string>
+	<key>KeepAlive</key>
+	<false/>
+	<key>MachServices</key>
+    <dict>
+	<key>com.cm90.xpcToolStrap</key>
+	<true/>
+    </dict>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/var/jb/usr/local/libexec/xpcToolStrapd</string>
+	</array>
+</dict>
+</plist>
+
+ 

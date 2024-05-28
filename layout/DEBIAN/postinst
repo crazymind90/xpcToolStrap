@@ -1,0 +1,20 @@
+#!/bin/sh
+
+
+
+echo "Signing ..."
+ldid -s /var/jb/usr/local/libexec/xpcToolStrapd /var/jb/usr/local/libexec/xpcToolStrapd
+ldid -s /var/jb/usr/local/libexec/xpcToolStrapd /var/jb/usr/lib/libxpcToolStrap.dylib
+
+echo "Setting [xpcToolStrapd] permissions ..."
+chown root:wheel /var/jb/usr/local/libexec/xpcToolStrapd
+chmod 06777 /var/jb/usr/local/libexec/xpcToolStrapd
+
+echo "Setting [Daemon~com.cm90.xpcToolStrap] permissions ..."
+chown root:wheel /var/jb/Library/LaunchDaemons/com.cm90.xpcToolStrap.plist
+chmod 644 /var/jb/Library/LaunchDaemons/com.cm90.xpcToolStrap.plist
+
+echo "Loading xpcToolStrap daemons ..."
+launchctl load /var/jb/Library/LaunchDaemons/com.cm90.xpcToolStrap.plist 2> /dev/null
+echo "Done!"
+exit 0
