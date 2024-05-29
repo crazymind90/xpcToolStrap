@@ -113,7 +113,7 @@ static NSString *SWF(id Value, ...) {
 
 	if ((self = [super init])){ 
 
-	CLog(@"[+] In_App ");
+	// CLog(@"[+] In_App ");
 
 
 	void *xpcToolHandle = dlopen("/var/jb/usr/lib/libxpcToolStrap.dylib", RTLD_LAZY);
@@ -146,7 +146,7 @@ static NSString *SWF(id Value, ...) {
 
 -(NSDictionary *) handleMSG:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
 
-		CLog(@"[+] App~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
+		// CLog(@"[+] App~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
 		Alert(1,@"[+] App~handleMSG :  %@",userInfo);
 
 		return @{@"iKey":@"InAppMsg~THIS IS THE REPLAY MSG"};

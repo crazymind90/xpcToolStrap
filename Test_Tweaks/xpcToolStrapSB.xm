@@ -114,7 +114,7 @@ static NSDictionary *ret_dict = nil;
 
 	if ((self = [super init])){ 
 
-	CLog(@"[+] SB_ctor ");
+	// CLog(@"[+] SB_ctor ");
 
 
 
@@ -152,13 +152,13 @@ static NSDictionary *ret_dict = nil;
  
 -(void) handleMSG111:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
 
-		CLog(@"[+] SB~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
+		// CLog(@"[+] SB~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
 		Alert(1,@"[+] SB~handleMSG :  %@",userInfo);
 }
 
 -(void) handleMSG222:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
 
-		CLog(@"[+] SB~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
+		// CLog(@"[+] SB~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
 		Alert(1,@"[+] SB~handleMSG :  %@",userInfo);
 }
 

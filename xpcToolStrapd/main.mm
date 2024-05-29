@@ -224,10 +224,8 @@ int main(int argc, char** argv, char** envp)
         [XPCToolStrapd load];
  
  #pragma mark - To prevent this daemon from restarting each 3 seconds
-
-
-        dispatch_main();
-
+ 
+        [[NSRunLoop currentRunLoop] run];
 	});
 
 		return 0;

@@ -29,6 +29,7 @@
 @property (nonatomic, strong) NSMutableArray <NSString *> *uNames;
 @property (nonatomic, strong) NSMutableArray <NSString *> *msgIds;
 
+
 #pragma mark - Useless 
 @property void (^constHandler)(NSString *msgID,NSDictionary *userInfo);
 @property void (^constReplyHandler)(NSString *msgID,NSDictionary *userInfo);
@@ -98,6 +99,15 @@
     objc_setAssociatedObject(self, @selector(msgIds), msgIds, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
+
+- (NSTimer *)eventTimer {
+    return objc_getAssociatedObject(self, @selector(eventTimer));
+}
+
+- (void)setEventTimer:(NSTimer *)eventTimer {
+    objc_setAssociatedObject(self, @selector(eventTimer), eventTimer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+ 
 #pragma  --------------------------------------------- Send MSG ----------------------------------------------------
 
 
@@ -358,17 +368,14 @@
                             
                         NSString *origMsgId = [toString(_msgID) stringByReplacingOccurrencesOfString:@"~XPC_REPLY" withString:@""];
 
-                            // self.constReplyHandler(clearMsgId, replyDict);
+
                         if ([self isValidTargetForMsgId:origMsgId]) {
                         [self callMsgIdTarget:origMsgId userInfo:replyDict];
                         }
                         [libxpcToolStrap.shared.msgIds removeObject:SWF(@"%s",_msgID)];
  
                         } else { 
-                        // if (self.constHandler) {
-                        //     NSString *clearMsgId = [self purgeMsgId:_msgID uName:_uname];
-                        //     self.constHandler(clearMsgId, replyDict);
-                        //  }
+
                         }
 
                          
@@ -390,18 +397,24 @@
 
 #pragma  --------------------------------------------- Private ----------------------------------------------------
 
+ 
 
-   
-- (void) startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
+- (void)startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
 
- #pragma mark - A background loop to make the connection alive 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    for (;;) { 
-      [self _startEventWithMessageIDs:ids uName:uName];
-      [NSThread sleepForTimeInterval:0.7];
-       }
+        [self scheduleEventWithMessageIDs:ids uName:uName];
     });
 }
+
+- (void)scheduleEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
+    [self _startEventWithMessageIDs:ids uName:uName];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7 * NSEC_PER_SEC)), 
+                   dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self scheduleEventWithMessageIDs:ids uName:uName];
+    });
+}
+ 
 
 - (void) postToClientWithMsgID:(NSString *)msgID uName:(NSString *)uName userInfo:(NSDictionary *)dict {
    [self _postToClientWithMsgID:msgID uName:uName userInfo:dict isWithReply:NO];
