@@ -28,6 +28,7 @@
 @property (nonatomic, strong) NSMutableDictionary <id, NSArray *> *registeredTargets;
 @property (nonatomic, strong) NSMutableArray <NSString *> *uNames;
 @property (nonatomic, strong) NSMutableArray <NSString *> *msgIds;
+@property (nonatomic, assign) BOOL isScheduling;
 
 
 #pragma mark - Useless 
@@ -37,7 +38,6 @@
 @end
 
 
- 
 
 
 @implementation libxpcToolStrap
@@ -99,14 +99,16 @@
     objc_setAssociatedObject(self, @selector(msgIds), msgIds, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-
-- (NSTimer *)eventTimer {
-    return objc_getAssociatedObject(self, @selector(eventTimer));
+- (BOOL)isScheduling {
+    NSNumber *number = objc_getAssociatedObject(self, @selector(isScheduling));
+    return [number boolValue];
 }
 
-- (void)setEventTimer:(NSTimer *)eventTimer {
-    objc_setAssociatedObject(self, @selector(eventTimer), eventTimer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setIsScheduling:(BOOL)isScheduling {
+    NSNumber *number = [NSNumber numberWithBool:isScheduling];
+    objc_setAssociatedObject(self, @selector(isScheduling), number, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
+ 
  
 #pragma  --------------------------------------------- Send MSG ----------------------------------------------------
 
@@ -400,20 +402,45 @@
  
 
 - (void)startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
-
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self scheduleEventWithMessageIDs:ids uName:uName];
     });
 }
 
 - (void)scheduleEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
+    @synchronized (self) {
+        if (self.isScheduling) {
+            return; 
+        }
+        self.isScheduling = YES;
+    }
+
     [self _startEventWithMessageIDs:ids uName:uName];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7 * NSEC_PER_SEC)), 
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), 
                    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        @synchronized (self) {
+            self.isScheduling = NO;
+        }
         [self scheduleEventWithMessageIDs:ids uName:uName];
     });
 }
+
+// - (void)startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
+
+//     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//         [self scheduleEventWithMessageIDs:ids uName:uName];
+//     });
+// }
+
+// - (void)scheduleEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
+//     [self _startEventWithMessageIDs:ids uName:uName];
+    
+//     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), 
+//                    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//         [self scheduleEventWithMessageIDs:ids uName:uName];
+//     });
+// }
  
 
 - (void) postToClientWithMsgID:(NSString *)msgID uName:(NSString *)uName userInfo:(NSDictionary *)dict {

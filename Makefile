@@ -5,7 +5,7 @@ export SDKVERSION = 14.5
 
 export THEOS_PACKAGE_SCHEME = rootless
 
-export iP = 192.168.1.103
+export iP = 192.168.1.102
 export Port = 22
 export Pass = alpine
 export Bundle = com.apple.springboard

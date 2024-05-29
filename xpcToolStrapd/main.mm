@@ -222,11 +222,11 @@ int main(int argc, char** argv, char** envp)
 	dispatch_once(&once, ^{
 
         [XPCToolStrapd load];
- 
- #pragma mark - To prevent this daemon from restarting each 3 seconds
- 
-        [[NSRunLoop currentRunLoop] run];
+  
 	});
+
+     #pragma mark - To prevent this daemon from restarting each 3 seconds
+        [[NSRunLoop currentRunLoop] run];
 
 		return 0;
 	}
