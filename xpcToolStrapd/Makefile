@@ -7,7 +7,7 @@ include $(THEOS)/makefiles/common.mk
 export THEOS_PACKAGE_SCHEME = rootless
 
 TOOL_NAME = xpcToolStrapd
-xpcToolStrapd_FILES = $(wildcard *.mm)
+xpcToolStrapd_FILES = $(wildcard *.mm) ../PlistManager.m
 xpcToolStrapd_INSTALL_PATH = /usr/local/libexec
 xpcToolStrapd_CODESIGN_FLAGS = -S../ent.plist
 ADDITIONAL_CFLAGS += -DTHEOS_LEAN_AND_MEAN -Wno-shorten-64-to-32

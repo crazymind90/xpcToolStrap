@@ -7,6 +7,7 @@
 #include <dlfcn.h>
 #import <objc/runtime.h>  
 #include <xpc/xpc.h>
+#import "PlistManager.h"
 
 
 
@@ -174,15 +175,15 @@ static NSString *toString(const char *a1) {
 //             return MACH_PORT_NULL;
 //         }
 
-//         const char *names[1] = {"__xpc_connection_copy_listener_port"};
-//         void *syms[1];
+        // const char *names[1] = {"__xpc_connection_copy_listener_port"};
+        // void *syms[1];
 
-//         if (!LHFindSymbols(libxpc, names, syms, 1)) {
-//             CLogBoot(@"[-] _xpc_connection_copy_listener_port not found :(");
-//             return MACH_PORT_NULL;
-//         } else {
-//             CLogBoot(@"[+++++] _xpc_connection_copy_listener_port [SYMBOL] FOUND");
-//         }
+        // if (!LHFindSymbols(libxpc, names, syms, 1)) {
+        //     CLogBoot(@"[-] _xpc_connection_copy_listener_port not found :(");
+        //     return MACH_PORT_NULL;
+        // } else {
+        //     CLogBoot(@"[+++++] _xpc_connection_copy_listener_port [SYMBOL] FOUND");
+        // }
 
 //         __xpc_connection_copy_listener_port = (mach_port_t (*)(xpc_connection_t))ptrauth_sign_unauthenticated(syms[0], ptrauth_key_asia, 0);
 //     }

@@ -100,10 +100,11 @@ static NSString *SWF(id Value, ...) {
 #import <Foundation/Foundation.h>
 #import "libxpcToolStrap.h"
 #include <dlfcn.h>
+#include <libhooker/libhooker.h>
 
 @interface SBServer : NSObject
 
--(NSDictionary *) handleMSG:(NSString *)msgId userInfo:(NSDictionary *)userInfo;
+-(void) handleMSG:(NSString *)msgId userInfo:(NSDictionary *)userInfo;
 
 @end 
 
@@ -113,25 +114,22 @@ static NSString *SWF(id Value, ...) {
 
 	if ((self = [super init])){ 
 
-	// CLog(@"[+] In_App ");
+	CLog(@"[+] In_App ");
 
-
+  
 	void *xpcToolHandle = dlopen("/var/jb/usr/lib/libxpcToolStrap.dylib", RTLD_LAZY);
 	if (xpcToolHandle) {
 
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 
 
- 
-
     	libxpcToolStrap *libTool = [objc_getClass("libxpcToolStrap") shared];
 
         NSString *uName = [libTool defineUniqueName:@"com.crazymind90.uniqueName"];
-        [libTool startEventWithMessageIDs:@[@"111",@"222",@"333"] uName:uName];
-	    [libTool addTarget:self selector:@selector(handleMSG:userInfo:) forMsgID:@"111" uName:uName];
-        
-      
 
+		[libTool addTarget:self selector:@selector(handleMSG:userInfo:) forMsgID:@"UDID_Sender" uName:uName];
+		[libTool postToClientAndReceiveReplyWithMsgID:@"UDID_Sender" uName:uName  userInfo:@{@"action":@"getUDID"}];
+		
 
 		});
 
@@ -144,12 +142,9 @@ static NSString *SWF(id Value, ...) {
  
 
 
--(NSDictionary *) handleMSG:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
+-(void) handleMSG:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
 
-		// CLog(@"[+] App~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
-		Alert(1,@"[+] App~handleMSG :  %@",userInfo);
-
-		return @{@"iKey":@"InAppMsg~THIS IS THE REPLAY MSG"};
+		Alert(1,@"UDID : %@",userInfo[@"UDID"]);
 }
 
 
@@ -157,7 +152,7 @@ static NSString *SWF(id Value, ...) {
 @end
 
 
-
+ 
 
 %ctor
 {		

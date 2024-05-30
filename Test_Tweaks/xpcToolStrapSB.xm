@@ -99,11 +99,13 @@ static void Alert(float Timer,id Message, ...) {
 #define CLog(format, ...) NSLog(@"CM90~[SpringBoard] : " format, ##__VA_ARGS__)
 
 
+@interface UIDevice (_xpc)
+- (NSString *) sf_udidString;
+@end 
   
 @interface SBServer : NSObject
 
--(void) handleMSG111:(NSString *)msgId userInfo:(NSDictionary *)userInfo;
--(void) handleMSG222:(NSString *)msgId userInfo:(NSDictionary *)userInfo;
+-(NSDictionary *) handleMSG:(NSString *)msgId userInfo:(NSDictionary *)userInfo;
 @end 
 
 @implementation SBServer
@@ -114,32 +116,23 @@ static NSDictionary *ret_dict = nil;
 
 	if ((self = [super init])){ 
 
-	// CLog(@"[+] SB_ctor ");
+	CLog(@"[+] SB_ctor ");
 
 
 
 	void *xpcToolHandle = dlopen("/var/jb/usr/lib/libxpcToolStrap.dylib", RTLD_LAZY);
 	if (xpcToolHandle) {
 
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 
- 
-
-	libxpcToolStrap *libTool = [objc_getClass("libxpcToolStrap") shared];
- 
-	NSString *uname = [libTool defineUniqueName:@"com.crazymind90.uniqueName"];
-	
-
-	[libTool addTarget:self selector:@selector(handleMSG111:userInfo:) forMsgID:@"111" uName:uname];
-	[libTool postToClientAndReceiveReplyWithMsgID:@"111" uName:uname  userInfo:@{@"UDID":@"11111111-11111-11111"}];
-
-
-	[libTool addTarget:self selector:@selector(handleMSG222:userInfo:) forMsgID:@"222" uName:uname];
-	[libTool postToClientWithMsgID:@"222" uName:uname  userInfo:@{@"UDID":@"22222222-22222-22222"}];
-	 
 		
+		libxpcToolStrap *libTool = [objc_getClass("libxpcToolStrap") shared];
 
- 
+        NSString *uName = [libTool defineUniqueName:@"com.crazymind90.uniqueName"];
+        [libTool startEventWithMessageIDs:@[@"UDID_Sender"] uName:uName];
+	    [libTool addTarget:self selector:@selector(handleMSG:userInfo:) forMsgID:@"UDID_Sender" uName:uName];
+
+  
 
 		});
 
@@ -150,17 +143,11 @@ static NSDictionary *ret_dict = nil;
     return self;
 }
  
--(void) handleMSG111:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
-
-		// CLog(@"[+] SB~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
-		Alert(1,@"[+] SB~handleMSG :  %@",userInfo);
+-(NSDictionary *) handleMSG:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
+	
+		return @{@"UDID":[UIDevice.currentDevice sf_udidString] ?: @"No udid"};
 }
-
--(void) handleMSG222:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
-
-		// CLog(@"[+] SB~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
-		Alert(1,@"[+] SB~handleMSG :  %@",userInfo);
-}
+ 
 
 
 @end

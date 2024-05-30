@@ -28,7 +28,7 @@
 @property (nonatomic, strong) NSMutableDictionary <id, NSArray *> *registeredTargets;
 @property (nonatomic, strong) NSMutableArray <NSString *> *uNames;
 @property (nonatomic, strong) NSMutableArray <NSString *> *msgIds;
-@property (nonatomic, assign) BOOL isScheduling;
+
 
 
 #pragma mark - Useless 
@@ -39,10 +39,11 @@
 
 
 
-
 @implementation libxpcToolStrap
- 
- 
+  
+
+
+
 
 + (instancetype) shared {
     static libxpcToolStrap *shared = nil;
@@ -99,15 +100,6 @@
     objc_setAssociatedObject(self, @selector(msgIds), msgIds, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (BOOL)isScheduling {
-    NSNumber *number = objc_getAssociatedObject(self, @selector(isScheduling));
-    return [number boolValue];
-}
-
-- (void)setIsScheduling:(BOOL)isScheduling {
-    NSNumber *number = [NSNumber numberWithBool:isScheduling];
-    objc_setAssociatedObject(self, @selector(isScheduling), number, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
  
  
 #pragma  --------------------------------------------- Send MSG ----------------------------------------------------
@@ -296,21 +288,21 @@
 
     #pragma mark - Add all IDs to array 
 
-            for (NSString *eachMsgId in ids) {
+        //     for (NSString *eachMsgId in ids) {
 
-                if (eachMsgId && [eachMsgId isKindOfClass:[NSString class]]) {
-                if ([eachMsgId containsString:@"XPC_REPLY"]) { 
+        //         if (eachMsgId && [eachMsgId isKindOfClass:[NSString class]]) {
+        //         if ([eachMsgId containsString:@"XPC_REPLY"]) { 
 
-                if (![libxpcToolStrap.shared.msgIds containsObject:SWF(@"%@",eachMsgId)]) { 
-                     [libxpcToolStrap.shared.msgIds addObject:SWF(@"%@",eachMsgId)];
-                    }
-                } else {
-                    if (![libxpcToolStrap.shared.msgIds containsObject:SWF(@"%@~%@",uName,eachMsgId)]) { 
-                         [libxpcToolStrap.shared.msgIds addObject:SWF(@"%@~%@",uName,eachMsgId)];
-                 }
-              }
-            }
-          }
+        //         if (![libxpcToolStrap.shared.msgIds containsObject:SWF(@"%@",eachMsgId)]) { 
+        //              [libxpcToolStrap.shared.msgIds addObject:SWF(@"%@",eachMsgId)];
+        //             }
+        //         } else {
+        //             if (![libxpcToolStrap.shared.msgIds containsObject:SWF(@"%@~%@",uName,eachMsgId)]) { 
+        //                  [libxpcToolStrap.shared.msgIds addObject:SWF(@"%@~%@",uName,eachMsgId)];
+        //          }
+        //       }
+        //     }
+        //   }
         
 
             xpc_object_t xpc_msgIds = convertNSArrayToXPCArray(libxpcToolStrap.shared.msgIds);
@@ -408,40 +400,42 @@
 }
 
 - (void)scheduleEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
-    @synchronized (self) {
-        if (self.isScheduling) {
-            return; 
+
+    for (NSString *eachMsgId in ids) {
+        if (eachMsgId && [eachMsgId isKindOfClass:[NSString class]]) {
+        if ([eachMsgId containsString:@"XPC_REPLY"]) { 
+
+        if (![libxpcToolStrap.shared.msgIds containsObject:SWF(@"%@",eachMsgId)]) { 
+                [libxpcToolStrap.shared.msgIds addObject:SWF(@"%@",eachMsgId)];
+            }
+        } else {
+            if (![libxpcToolStrap.shared.msgIds containsObject:SWF(@"%@~%@",uName,eachMsgId)]) { 
+                    [libxpcToolStrap.shared.msgIds addObject:SWF(@"%@~%@",uName,eachMsgId)];
+            }
         }
-        self.isScheduling = YES;
+      }
     }
 
-    [self _startEventWithMessageIDs:ids uName:uName];
+    NSMutableDictionary *dict = [PlistManager.shared loadPlist];
+
+    for (NSString *eachKey in dict.allKeys) {
+        
+        if ([libxpcToolStrap.shared.msgIds containsObject:eachKey]) {
+            // CLog(@"msg found for : %@",eachKey);
+            [self _startEventWithMessageIDs:ids uName:uName];
+            [PlistManager.shared removeObjectForKey:eachKey];
+        }
+    }
+
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), 
                    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        @synchronized (self) {
-            self.isScheduling = NO;
-        }
+
         [self scheduleEventWithMessageIDs:ids uName:uName];
     });
 }
 
-// - (void)startEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
-
-//     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//         [self scheduleEventWithMessageIDs:ids uName:uName];
-//     });
-// }
-
-// - (void)scheduleEventWithMessageIDs:(NSArray<NSString *> *)ids uName:(NSString *)uName {
-//     [self _startEventWithMessageIDs:ids uName:uName];
-    
-//     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), 
-//                    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//         [self scheduleEventWithMessageIDs:ids uName:uName];
-//     });
-// }
- 
+  
 
 - (void) postToClientWithMsgID:(NSString *)msgID uName:(NSString *)uName userInfo:(NSDictionary *)dict {
    [self _postToClientWithMsgID:msgID uName:uName userInfo:dict isWithReply:NO];

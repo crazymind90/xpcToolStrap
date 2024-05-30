@@ -24,6 +24,9 @@ include $(THEOS_MAKE_PATH)/tweak.mk
 
 SUBPROJECTS += xpcToolStrapd
 SUBPROJECTS += libxpcToolStrap
+# SUBPROJECTS += Test_Tweaks
+
+
 
 
 include $(THEOS_MAKE_PATH)/aggregate.mk

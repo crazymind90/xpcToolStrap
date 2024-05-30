@@ -10,6 +10,14 @@
 		<array>
 			<dict>
 				<key>type</key>
+				<string>file</string>
+				<key>extension_class</key>
+				<string>com.apple.app-sandbox.read-write</string>
+				<key>path</key>
+				<string>/var/jb/var/mobile/Library/Preferences</string>
+			</dict>
+			<dict>
+				<key>type</key>
 				<string>mach</string>
 				<key>extension_class</key>
 				<string>com.apple.security.exception.mach-register.global-name</string>

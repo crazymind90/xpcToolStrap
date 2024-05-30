@@ -99,6 +99,12 @@
                                     if (xpc_dataContent) {
     #pragma mark - Store [Poster]'s dictionary in [sharedMessages] for key : [XPC_UNIQUE_NAMES] & [XPC_MSG_ID]
              [XPCToolStrapd.shared.sharedMessages setObject:@[xpc_dataContent,shouldReply,toString(_replyMsgId),isWithReply,toString(_uname)] forKey:toString(_msgID)];
+             
+             [PlistManager.shared setObject:@1 forKey:toString(_msgID)];
+             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [PlistManager.shared removeObjectForKey:toString(_msgID)];
+             });
+                                   
                                     } else {
                                     }
                                 } else {
@@ -221,6 +227,7 @@ int main(int argc, char** argv, char** envp)
 	static dispatch_once_t once = 0;
 	dispatch_once(&once, ^{
 
+        [PlistManager.shared removeAllObjects];
         [XPCToolStrapd load];
   
 	});

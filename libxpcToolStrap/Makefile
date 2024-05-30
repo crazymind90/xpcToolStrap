@@ -8,7 +8,7 @@ include $(THEOS)/makefiles/common.mk
 
 export LIBRARY_NAME = libxpcToolStrap
 
-libxpcToolStrap_FILES = libxpcToolStrap.mm
+libxpcToolStrap_FILES = libxpcToolStrap.mm ../PlistManager.m
 libxpcToolStrap_CFLAGS = -Wno-objc-designated-initializers  
 libxpcToolStrap_CODESIGN_FLAGS = -S../ent.plist
 libxpcToolStrap_INSTALL_PATH = /usr/lib
