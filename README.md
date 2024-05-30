@@ -35,71 +35,71 @@ It functions as both a daemon and a library ..
 ```
 ## How to use it ?
 
+#### For example ~ Getting UDID from SpringBoard to App ..
+#### SpringBoard is [Client] and App is [Poster] ..
+ 
+<br></br>
 * Add `libxpcToolStrap.h` to your project .
 ```objective-c
 #import "libxpcToolStrap.h"
 ```
+ 
 
-#### This is [Poster] ~ the process you want to send the msg from
+## This is [Client] ~ SpringBoard :
 ```objective-c
-#include <dlfcn.h>
+void *xpcToolHandle = dlopen("/var/jb/usr/lib/libxpcToolStrap.dylib", RTLD_LAZY);
+	if (xpcToolHandle) {
+ 
+            libxpcToolStrap *libTool = [objc_getClass("libxpcToolStrap") shared];
+
+  	    NSString *uName = [libTool defineUniqueName:@"com.crazymind90.uniqueName"];
+            [libTool startEventWithMessageIDs:@[@"UDID_Sender"] uName:uName];
+	    [libTool addTarget:self selector:@selector(handleMSG:userInfo:) forMsgID:@"UDID_Sender" uName:uName];
+ 
+	}
 ```
+
+#### Target method : 
+```objective-c
+-(NSDictionary *) handleMSG:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
+
+	if ([(NSString *)userInfo[@"action"] isEqual:@"getUDID"])
+	  return @{@"UDID":[UIDevice.currentDevice sf_udidString] ?: @"No udid"};
+	
+	return @{};
+}
+
+```
+  
+
+## This is [Poster] ~ App :
 ```objective-c
 void *xpcToolHandle = dlopen("/var/jb/usr/lib/libxpcToolStrap.dylib", RTLD_LAZY);
 	if (xpcToolHandle) {
 
 
 	libxpcToolStrap *libTool = [objc_getClass("libxpcToolStrap") shared];
- 
-	NSString *uname = [libTool defineUniqueName:@"com.crazymind90.uniqueName"];
 	
-	[libTool addTarget:self selector:@selector(handleMSG:userInfo:) forMsgID:@"111" uName:uname];
+	NSString *uName = [libTool defineUniqueName:@"com.crazymind90.uniqueName"];
+	
+	[libTool addTarget:self selector:@selector(handleMSG:userInfo:) forMsgID:@"UDID_Sender" uName:uName];
+	[libTool postToClientAndReceiveReplyWithMsgID:@"UDID_Sender" uName:uName  userInfo:@{@"action":@"getUDID"}];
 
-        // To send and receive Msg :
-  	[libTool postToClientAndReceiveReplyWithMsgID:@"111" uName:uname  userInfo:@{@"UDID":@"11111111-11111-11111"}];
-
-        // To send a Msg only
-        [libTool postToClientWithMsgID:@"222" uName:uname  userInfo:@{@"UDID":@"22222222-22222-22222"}];
 
  }
 ```
 
-#### Here you will reveice a reply to the target you added in `-[addTarget:selector:forMsgID:uName:]`
-```
-
+#### Target method : 
+```objective-c
 -(void) handleMSG:(NSString *)msgId userInfo:(NSDictionary *)userInfo {
-   NSLog(@"[+] SB~handleMSG : msgId : %@ | userInfo : %@",msgId,userInfo);
+  Alert(1,@"Got UDID : %@",userInfo[@"UDID"]);
 }
-
 ```
-
-
-
-#### This is [Client] ~ the process you receive msg to
-```objective-c
-#include <dlfcn.h>
-```
-```objective-c
-void *xpcToolHandle = dlopen("/var/jb/usr/lib/libxpcToolStrap.dylib", RTLD_LAZY);
-	if (xpcToolHandle) {
-
-
-      libxpcToolStrap *libTool = [objc_getClass("libxpcToolStrap") shared];
-
-      NSString *uName = [libTool defineUniqueName:@"com.crazymind90.uniqueName"];
-      [libTool startEventWithMessageIDs:@[@"111",@"222"] uName:uName];
-      [libTool addTarget:self selector:@selector(handleMSG:userInfo:) forMsgID:@"111" uName:uName];
-      // This target should return NSDictionary to get the return value if you used -[postToClientAndReceiveReplyWithMsgID:]
-      // and you can make it void if you used -[postToClientWithMsgID:]
-
-
- }
-```
-
+<br></br>
 ## Important ..
-* You `MUST` use `dlopen` before calling the functions
-* `UniqueName` must be the same in [Poster] and [Client]
-* Use `libSandy` if your msg did not reach to [Client]
+* You `MUST` use `dlopen` before calling the functions .
+* `UniqueName` must be the same in [Poster] and [Client] .
+* Use `libSandy` if your msg did not reach to [Client] .
 
 
 
