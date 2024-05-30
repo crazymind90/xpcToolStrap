@@ -45,7 +45,7 @@ It functions as both a daemon and a library ..
 ```
  
 
-## This is [Client] ~ SpringBoard :
+## [Client] ~ SpringBoard :
 ```objective-c
 void *xpcToolHandle = dlopen("/var/jb/usr/lib/libxpcToolStrap.dylib", RTLD_LAZY);
 	if (xpcToolHandle) {
@@ -72,7 +72,7 @@ void *xpcToolHandle = dlopen("/var/jb/usr/lib/libxpcToolStrap.dylib", RTLD_LAZY)
 ```
   
 
-## This is [Poster] ~ App :
+## [Poster] ~ App :
 ```objective-c
 void *xpcToolHandle = dlopen("/var/jb/usr/lib/libxpcToolStrap.dylib", RTLD_LAZY);
 	if (xpcToolHandle) {
